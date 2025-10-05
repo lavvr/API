@@ -5,7 +5,7 @@ from typing import List
 from utils.logger import logger
 
 
-class TextPreProcessor:
+class TextPreprocessor:
 
     def __init__(self, remove_commas: bool = True, min_word_length: int = 2):        
         self.remove_commas = remove_commas

@@ -1,4 +1,4 @@
-from .processors import TextProcessor
+from .processors import TextPreprocessor
 
 
-__all__ = ['TextProcessor']
+__all__ = ['TextPreprocessor']

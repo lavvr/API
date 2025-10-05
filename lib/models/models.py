@@ -6,7 +6,7 @@ import numpy as np
 from utils.logger import logger  
 
 
-class BERTClassifier:
+class BertClassifier:
     def __init__(self, model_name: str = "cointegrated/rubert-tiny2"):
         self.model_name = model_name
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
@@ -31,10 +31,10 @@ class BERTClassifier:
             logger.error(f"Something went wrong during loading model {self.model_name} \
                         on {self.device}: {e}")
             
-    def _predict(self, text: List[str]) -> List[Tuple[int, float, float]]:
+    def predict(self, text: List[str]) -> List[Tuple[int, float, float]]:
         try:
             inputs = self.tokenizer(
-                texts,
+                text,
                 truncation=True,
                 padding=True,
                 max_length=512,
@@ -60,7 +60,7 @@ class BERTClassifier:
         except Exception as e:
             logger.error(f"Something went wrong during prediction: {e}")
             raise
-    def _predict_batch(self, texts):
+    def predict_batch(self, texts):
         try:
             inputs = self.tokenizer(
                 texts,
@@ -90,13 +90,29 @@ class BERTClassifier:
         
         except Exception as e:
             logger.error(f"Something went wrong during batch prediction: {e}")
+            raise
 
 class ModelManager:
-    def __init__():
-        pass
+    def __init__(self, classifier: BertClassifier = None):
+        self.classifier = classifier or BertClassifier()
 
-    def predict():
-        pass
+        logger.info("Model manager has been initialized")
 
-    def predict_batch():
-        pass
+    def predict(self, text : str) -> Dict[str, Any]:
+        prediction, probability, confidence = self.classifier.predict(text)
+
+        return {"prediction" : prediction, 
+                "probability" : probability, 
+                "confidence" : confidence}
+    
+    def predict_batch(self, texts: List[str]) -> List[Dict[str, Any]]:
+        results = self.classifier.predict_batch(texts)
+
+        return [
+            {
+                "prediction" : pred,
+                "probability" : prob,
+                "confidence" : conf
+            }
+            for pred, prob, conf in results
+        ]

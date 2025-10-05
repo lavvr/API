@@ -1,4 +1,4 @@
-from .models import BERTClassifier, ModelManager
+from .models import BertClassifier, ModelManager
 
 
-__all__ = ['BERTClassifier', 'ModelManager']
+__all__ = ['BertClassifier', 'ModelManager']
