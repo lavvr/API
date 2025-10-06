@@ -14,7 +14,8 @@ class BertClassifier:
         self.model = None
         
         logger.info(f"Initializing model: {model_name}")
-
+        self._load_model()
+        
     def _load_model(self):
         try:
             logger.info(f"Loading model {self.model_name}...")
