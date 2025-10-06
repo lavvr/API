@@ -30,8 +30,9 @@ class BertClassifier:
         except Exception as e:
             logger.error(f"Something went wrong during loading model {self.model_name} \
                         on {self.device}: {e}")
+            raise
             
-    def predict(self, text: List[str]) -> List[Tuple[int, float, float]]:
+    def predict(self, text: str) -> Tuple[int, float, float]:
         try:
             inputs = self.tokenizer(
                 text,
@@ -53,14 +54,16 @@ class BertClassifier:
             probability = float(probs[1]) 
             confidence = float(np.max(probs))  
             
-            logger.debug(f"Prediction: {prediction}, Probability: {probability:.4f}, Confidence: {confidence:.4f}")
+            logger.debug(f"Prediction: {prediction}, Probability: {probability:.3f}, Confidence: {confidence:.3f}")
             
             return prediction, probability, confidence
         
         except Exception as e:
             logger.error(f"Something went wrong during prediction: {e}")
             raise
-    def predict_batch(self, texts):
+
+
+    def predict_batch(self, texts: List[str]) -> List[Tuple[int, float, float]]:
         try:
             inputs = self.tokenizer(
                 texts,
@@ -76,7 +79,7 @@ class BertClassifier:
                 outputs = self.model(**inputs)
                 predictions = torch.nn.functional.softmax(outputs.logits, dim=-1)
 
-            probs = torch.cpu().numpy()
+            probs = predictions.cpu().numpy() 
             results = []
 
             for i in range(len(texts)):

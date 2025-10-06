@@ -36,13 +36,13 @@ def initialize_services():
         logger.error(f"Something went wrong during BERT Classifier initilization: {e}")
 
     try:
-        model_manager = ModelManager(classifier=BertClassifier())
+        model_manager = ModelManager(classifier=bert_classifier)
     except Exception as e:
         logger.error(f"Something went wrong during Model Manager initilization: {e}")
 
     
 @asynccontextmanager
-async def lifespan():
+async def lifespan(app: FastAPI):
     logger.info("Starting API Server")
 
     initialize_services()
@@ -93,8 +93,8 @@ async def predict(request: PredictionRequest):
         logger.error(f"Error in prediction endpoint")
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/batch_predict", response_model=BatchPredictionRequest)
-async def batch_predict(request: BatchPredictionResponse):
+@app.post("/batch_predict", response_model=BatchPredictionResponse)
+async def batch_predict(request: BatchPredictionRequest):
     logger.info(f"Batch Predict endpoint called with {len(request.texts)} texts.")
 
     try:
@@ -105,10 +105,10 @@ async def batch_predict(request: BatchPredictionResponse):
         processed_texts = api_client.process_batch(request.texts)
         results = model_manager.predict_batch(processed_texts)
 
-        prediction_responses = [PredictionResponse(**results) for result in results]
+        prediction_responses = [PredictionResponse(**result) for result in results]
 
         logger.info(f"Batch prediction completed, predicted {len(request.texts)} texts")
-        return BatchPredictionResponse(prediction=prediction_responses)
+        return BatchPredictionResponse(predictions=prediction_responses)
     
     except Exception as e:
         logger.error(f"Error in batch prediction endpoint.")

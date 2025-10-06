@@ -1,3 +1,3 @@
-from .logger import APILogger, logger
+from .logger import ApiLogger, logger
 
-__all__ = ['APILogger', 'logger']
+__all__ = ['ApiLogger', 'logger']

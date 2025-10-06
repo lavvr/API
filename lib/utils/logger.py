@@ -1,6 +1,6 @@
 import logging
 
-class AppLogger:
+class ApiLogger:
     def __init__(self,
                  name='app',
                  log_level='INFO',
@@ -43,4 +43,4 @@ class AppLogger:
         self.logger.exception(message)
 
 
-logger = AppLogger()
+logger = ApiLogger()
