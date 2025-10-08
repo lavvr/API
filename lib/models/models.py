@@ -1,20 +1,26 @@
+#HANDLERS
+# MODEL MANAGER IN CLIENTS
+
+#Поднять контейнер, который читает из файла
+
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from typing import Tuple, Dict, Any, List
 import numpy as np
 
-from utils.logger import logger  
 
+from lib.dto import PredictionResponse, BatchPredictionResponse
+from utils.logger import logger  
+# ВСЕ ЧЕРЕЗ БАЗОВЫЕ ПАЙДЕНТИК МОДЕЛИ
 
 class BertClassifier:
     def __init__(self, model_name: str = "cointegrated/rubert-tiny2"):
         self.model_name = model_name
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
-        self.tokenizer = None
-        self.model = None
-        
+    
         logger.info(f"Initializing model: {model_name}")
-
+        self._load_model()
+        
     def _load_model(self):
         try:
             logger.info(f"Loading model {self.model_name}...")
@@ -101,14 +107,14 @@ class ModelManager:
 
         logger.info("Model manager has been initialized")
 
-    def predict(self, text : str) -> Dict[str, Any]:
+    def predict(self, text : str) -> PredictionResponse:
         prediction, probability, confidence = self.classifier.predict(text)
 
         return {"prediction" : prediction, 
                 "probability" : probability, 
                 "confidence" : confidence}
     
-    def predict_batch(self, texts: List[str]) -> List[Dict[str, Any]]:
+    def predict_batch(self, texts: List[str]) -> BatchPredictionResponse:
         results = self.classifier.predict_batch(texts)
 
         return [
