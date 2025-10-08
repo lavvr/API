@@ -5,7 +5,7 @@ from utils.logger import logger
 
 
 class APIClient:
-    def __init__(self, preprocessor: TextPreprocessor = None):
+    def __init__(self, preprocessor: TextPreprocessor | None = None):
         self.preprocessor = preprocessor or TextPreprocessor()
 
         logger.info("APIClient has been initialized")
